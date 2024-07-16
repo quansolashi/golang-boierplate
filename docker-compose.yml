@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  backend:
+    working_dir: /go/src/github.com/quansolashi/message-extractor/backend
+    build: 
+      context: ./backend
+    ports:
+      - 3002:3002
+    volumes:
+      - ./backend:/go/src/github.com/quansolashi/message-extractor/backend:cached
+    restart: always
+    command: make dev
