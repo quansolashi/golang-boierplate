@@ -10,8 +10,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/kelseyhightower/envconfig"
 	"golang.org/x/sync/errgroup"
 )
+
+type Environment struct {
+	Port int64 `envconfig:"PORT" default:"8080"`
+}
 
 func Run() error {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -19,8 +24,13 @@ func Run() error {
 
 	router := NewRouter()
 
+	var env Environment
+	if err := envconfig.Process("", &env); err != nil {
+		return fmt.Errorf("cmd: failed to load environment: %w", err)
+	}
+
 	server := &http.Server{
-		Addr:    fmt.Sprintf(":%d", 3002),
+		Addr:    fmt.Sprintf(":%d", env.Port),
 		Handler: router.Handler(),
 	}
 

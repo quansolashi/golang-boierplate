@@ -9,5 +9,6 @@ services:
       - 3002:3002
     volumes:
       - ./backend:/go/src/github.com/quansolashi/message-extractor/backend:cached
+    env_file: ./backend/.env
     restart: always
     command: make dev
