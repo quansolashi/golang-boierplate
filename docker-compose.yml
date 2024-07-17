@@ -1,8 +1,20 @@
 version: '3.8'
 
 services:
+  mysql:
+    image: mysql:8.0
+    ports:
+      - 3006:3006
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: msx-mysql
+    restart: always
+    volumes:
+      - ./db/mysql_data:/var/lib/mysql
   backend:
     working_dir: /go/src/github.com/quansolashi/message-extractor/backend
+    depends_on:
+      - mysql
     build: 
       context: ./backend
     ports:
