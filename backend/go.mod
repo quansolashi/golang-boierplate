@@ -4,7 +4,11 @@ go 1.22
 
 require golang.org/x/sync v0.7.0
 
-require go.uber.org/multierr v1.10.0 // indirect
+require (
+	github.com/rs/cors v1.11.0 // indirect
+	github.com/rs/cors/wrapper/gin v0.0.0-20240515105523-1562b1715b35 // indirect
+	go.uber.org/multierr v1.10.0 // indirect
+)
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect

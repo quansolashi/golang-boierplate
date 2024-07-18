@@ -1,19 +1,13 @@
 package cmd
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/quansolashi/message-extractor/backend/pkg/cors"
 )
 
-func NewRouter() *gin.Engine {
+func (a *app) newRouter() *gin.Engine {
 	rt := gin.New()
-
-	rt.GET("/health", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"message": "health",
-		})
-	})
-
+	rt.Use(cors.NewGinMiddleware())
+	a.web.Routes(rt.Group("/api"))
 	return rt
 }

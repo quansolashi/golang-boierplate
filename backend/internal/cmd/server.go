@@ -4,17 +4,24 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
+	web "github.com/quansolashi/message-extractor/backend/internal/web/controller"
+	"github.com/quansolashi/message-extractor/backend/pkg/http"
+	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
 
-type Environment struct {
+type app struct {
+	logger *zap.Logger
+	web    web.Controller
+}
+
+type environment struct {
 	Port int64 `envconfig:"PORT" default:"8080"`
 }
 
@@ -22,21 +29,22 @@ func Run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	router := NewRouter()
+	app := &app{}
+	if err := app.inject(ctx); err != nil {
+		return fmt.Errorf("cmd: failed to new registry: %w", err)
+	}
 
-	var env Environment
+	var env environment
 	if err := envconfig.Process("", &env); err != nil {
 		return fmt.Errorf("cmd: failed to load environment: %w", err)
 	}
 
-	server := &http.Server{
-		Addr:    fmt.Sprintf(":%d", env.Port),
-		Handler: router.Handler(),
-	}
+	router := app.newRouter()
+	server := http.NewHTTPServer(router.Handler(), env.Port)
 
 	eg, ectx := errgroup.WithContext(ctx)
 	eg.Go(func() (err error) {
-		if err = server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err = server.Serve(); err != nil {
 			log.Fatalf("listen: %s\n", err)
 		}
 		return
@@ -53,7 +61,7 @@ func Run() error {
 		time.Sleep(delay)
 	}
 
-	if err := server.Shutdown(ctx); err != nil {
+	if err := server.Stop(ctx); err != nil {
 		log.Fatal("Server Shutdown:", err)
 		return err
 	}
