@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/quansolashi/message-extractor/backend/internal/cmd"
+	"github.com/quansolashi/golang-boierplate/backend/internal/cmd"
 )
 
 func main() {

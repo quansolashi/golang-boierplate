@@ -4,11 +4,11 @@ import (
 	"context"
 	"time"
 
-	"github.com/quansolashi/message-extractor/backend/internal/database"
-	"github.com/quansolashi/message-extractor/backend/internal/database/mysql"
-	web "github.com/quansolashi/message-extractor/backend/internal/web/controller"
-	"github.com/quansolashi/message-extractor/backend/pkg/config"
-	pmysql "github.com/quansolashi/message-extractor/backend/pkg/mysql"
+	"github.com/quansolashi/golang-boierplate/backend/internal/database"
+	"github.com/quansolashi/golang-boierplate/backend/internal/database/mysql"
+	web "github.com/quansolashi/golang-boierplate/backend/internal/web/controller"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/config"
+	pmysql "github.com/quansolashi/golang-boierplate/backend/pkg/mysql"
 )
 
 func (a *app) inject(ctx context.Context) error {

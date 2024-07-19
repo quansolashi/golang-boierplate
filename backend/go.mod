@@ -1,4 +1,4 @@
-module github.com/quansolashi/message-extractor/backend
+module github.com/quansolashi/golang-boierplate/backend
 
 go 1.22
 

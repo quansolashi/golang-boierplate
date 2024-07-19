@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 
-	"github.com/quansolashi/message-extractor/backend/internal/entity"
+	"github.com/quansolashi/golang-boierplate/backend/internal/entity"
 )
 
 type Database struct {

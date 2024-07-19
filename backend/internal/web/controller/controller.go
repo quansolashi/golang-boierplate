@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/quansolashi/message-extractor/backend/internal/database"
+	"github.com/quansolashi/golang-boierplate/backend/internal/database"
 )
 
 type Controller interface {

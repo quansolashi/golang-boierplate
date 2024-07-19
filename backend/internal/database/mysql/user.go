@@ -3,9 +3,9 @@ package mysql
 import (
 	"context"
 
-	"github.com/quansolashi/message-extractor/backend/internal/database"
-	"github.com/quansolashi/message-extractor/backend/internal/entity"
-	"github.com/quansolashi/message-extractor/backend/pkg/mysql"
+	"github.com/quansolashi/golang-boierplate/backend/internal/database"
+	"github.com/quansolashi/golang-boierplate/backend/internal/entity"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/mysql"
 )
 
 type user struct {

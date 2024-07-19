@@ -9,9 +9,9 @@ import (
 	"syscall"
 	"time"
 
-	web "github.com/quansolashi/message-extractor/backend/internal/web/controller"
-	"github.com/quansolashi/message-extractor/backend/pkg/config"
-	"github.com/quansolashi/message-extractor/backend/pkg/http"
+	web "github.com/quansolashi/golang-boierplate/backend/internal/web/controller"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/config"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/http"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )

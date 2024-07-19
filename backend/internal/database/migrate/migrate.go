@@ -3,8 +3,8 @@ package migrate
 import (
 	"context"
 
-	"github.com/quansolashi/message-extractor/backend/internal/entity"
-	"github.com/quansolashi/message-extractor/backend/pkg/mysql"
+	"github.com/quansolashi/golang-boierplate/backend/internal/entity"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/mysql"
 	"go.uber.org/zap"
 )
 

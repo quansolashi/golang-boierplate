@@ -12,7 +12,7 @@ services:
     volumes:
       - ./db/mysql_data:/var/lib/mysql
   backend:
-    working_dir: /go/src/github.com/quansolashi/message-extractor/backend
+    working_dir: /go/src/github.com/quansolashi/golang-boierplate/backend
     depends_on:
       - mysql
     build: 
@@ -20,7 +20,7 @@ services:
     ports:
       - 3002:3002
     volumes:
-      - ./backend:/go/src/github.com/quansolashi/message-extractor/backend:cached
+      - ./backend:/go/src/github.com/quansolashi/golang-boierplate/backend:cached
     env_file: ./backend/.env
     restart: always
     command: make dev

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/quansolashi/message-extractor/backend/internal/util"
+	"github.com/quansolashi/golang-boierplate/backend/internal/util"
 )
 
 func (c *controller) userRoutes(rg *gin.RouterGroup) {

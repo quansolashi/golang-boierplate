@@ -9,8 +9,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/quansolashi/message-extractor/backend/internal/database/migrate"
-	"github.com/quansolashi/message-extractor/backend/pkg/mysql"
+	"github.com/quansolashi/golang-boierplate/backend/internal/database/migrate"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/mysql"
 	"go.uber.org/zap"
 )
 
