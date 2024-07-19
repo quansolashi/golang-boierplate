@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/kelseyhightower/envconfig"
 	web "github.com/quansolashi/message-extractor/backend/internal/web/controller"
+	"github.com/quansolashi/message-extractor/backend/pkg/config"
 	"github.com/quansolashi/message-extractor/backend/pkg/http"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -19,6 +19,7 @@ import (
 type app struct {
 	logger *zap.Logger
 	web    web.Controller
+	env    *config.Environment
 }
 
 type environment struct {
@@ -30,17 +31,14 @@ func Run() error {
 	defer cancel()
 
 	app := &app{}
+	// inject dependencies
 	if err := app.inject(ctx); err != nil {
 		return fmt.Errorf("cmd: failed to new registry: %w", err)
 	}
 
-	var env environment
-	if err := envconfig.Process("", &env); err != nil {
-		return fmt.Errorf("cmd: failed to load environment: %w", err)
-	}
-
+	// initialize router and http server with port
 	router := app.newRouter()
-	server := http.NewHTTPServer(router.Handler(), env.Port)
+	server := http.NewHTTPServer(router.Handler(), app.env.Port)
 
 	eg, ectx := errgroup.WithContext(ctx)
 	eg.Go(func() (err error) {
@@ -50,6 +48,7 @@ func Run() error {
 		return
 	})
 
+	// graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	select {

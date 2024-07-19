@@ -1,18 +1,26 @@
 package controller
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/quansolashi/message-extractor/backend/internal/database"
+)
 
 type Controller interface {
 	Routes(ctx *gin.RouterGroup)
 }
 
 type Params struct {
+	DB *database.Database
 }
 
-type controller struct{}
+type controller struct {
+	db *database.Database
+}
 
 func NewController(params *Params) Controller {
-	return &controller{}
+	return &controller{
+		db: params.DB,
+	}
 }
 
 func (c *controller) Routes(rg *gin.RouterGroup) {

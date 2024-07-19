@@ -33,6 +33,7 @@ func main() {
 }
 
 func run() error {
+	// from arguments
 	flag.StringVar(&dbsocket, "db-socket", "tcp", "mysql server protocol")
 	flag.StringVar(&dbhost, "db-host", "mysql", "mysql server host")
 	flag.StringVar(&dbport, "db-port", "3306", "mysql server port")
