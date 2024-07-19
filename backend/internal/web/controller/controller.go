@@ -25,4 +25,6 @@ func NewController(params *Params) Controller {
 
 func (c *controller) Routes(rg *gin.RouterGroup) {
 	c.heartbeatRoutes(rg.Group("/heartbeat"))
+
+	c.userRoutes(rg.Group("/users"))
 }

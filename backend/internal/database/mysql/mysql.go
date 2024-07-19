@@ -6,5 +6,7 @@ import (
 )
 
 func NewDatabase(client *mysql.Client) *database.Database {
-	return &database.Database{}
+	return &database.Database{
+		User: newUserClient(client),
+	}
 }
