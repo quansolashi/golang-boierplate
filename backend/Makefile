@@ -1,9 +1,10 @@
-.PHONY: help setup install mockgen protoc fmt vet lint build dev
+.PHONY: help setup install mockgen protoc fmt vet lint test build dev
 
 GOLANGCI_VERSION := 1.57.2
 MOCKGEN_VERSION := 0.4.0
 
 LINT_PACKAGES := $(shell go list $(CURDIR)/... | grep -v -e "mock" -v -e "tmp")
+TEST_PACKAGES := $(shell go list $(CURDIR)/internal/... $(CURDIR)/pkg/...)
 
 setup: install
 	wget -O - -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v${GOLANGCI_VERSION}
@@ -23,6 +24,9 @@ vet:
 
 lint:
 	./bin/golangci-lint run -c .golangci.yaml ./...
+
+test:
+	go test -v -cover -coverprofile=coverage.txt -covermode=atomic $(TEST_PACKAGES)
 
 build:
 	go build -o ./app ./cmd/main.go

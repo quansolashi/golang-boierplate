@@ -1,6 +1,8 @@
 package config
 
-import "github.com/kelseyhightower/envconfig"
+import (
+	"github.com/kelseyhightower/envconfig"
+)
 
 type Environment struct {
 	Port       int64  `envconfig:"PORT" default:"8080"`

@@ -61,8 +61,5 @@ func (a *app) newDatabase() (*database.Database, error) {
 	if err != nil {
 		return nil, err
 	}
-	// if err := client.DB.Use(telemetry.NewNrTracer(a.DBDatabase, a.DBHost, string(newrelic.DatastoreMySQL))); err != nil {
-	// 	return nil, err
-	// }
 	return mysql.NewDatabase(client), nil
 }
