@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 type Server interface {
@@ -17,8 +18,9 @@ type httpServer struct {
 
 func NewHTTPServer(handler http.Handler, port int64) Server {
 	s := &http.Server{
-		Addr:    fmt.Sprintf(":%d", port),
-		Handler: handler,
+		Addr:              fmt.Sprintf(":%d", port),
+		Handler:           handler,
+		ReadHeaderTimeout: 10 * time.Second,
 	}
 	return &httpServer{server: s}
 }

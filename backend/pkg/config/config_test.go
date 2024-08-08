@@ -49,8 +49,8 @@ func TestClient_ProcessEnv(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			c := newTestClient()
-			c.ProcessEnv(tt.prefix, tt.spec)
-			assert.Equal(t, tt.hasErr, tt.expect == tt.spec.Env)
+			err := c.ProcessEnv(tt.prefix, tt.spec)
+			assert.Equal(t, tt.hasErr, tt.expect == tt.spec.Env, err)
 		})
 	}
 }

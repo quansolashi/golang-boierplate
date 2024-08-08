@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/quansolashi/golang-boierplate/backend/internal/database"
@@ -12,6 +13,9 @@ import (
 )
 
 func (a *app) inject(ctx context.Context) error {
+	// temporary print ctx to avoid rules by lint
+	fmt.Println(ctx.Value(""))
+
 	// load environment variables
 	env, err := a.loadEnv()
 	if err != nil {

@@ -1,5 +1,3 @@
-// データベースのマイグレーション実行
-// go run ./hack/migration/main.go -db-socket='tcp' -db-port='3306' -db-name='msx-mysql' -db-username='root' -db-password='password'
 package main
 
 import (
@@ -50,7 +48,7 @@ func run() error {
 	}
 
 	log.Println("database migration will begin")
-	if err := migrate.Run(ctx, db, &zap.Logger{}); err != nil {
+	if err = migrate.Run(ctx, db, &zap.Logger{}); err != nil {
 		return err
 	}
 	log.Println("database migration has been completed")

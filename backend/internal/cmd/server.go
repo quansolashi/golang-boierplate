@@ -12,18 +12,13 @@ import (
 	web "github.com/quansolashi/golang-boierplate/backend/internal/web/controller"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/config"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/http"
-	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
 
 type app struct {
-	logger *zap.Logger
-	web    web.Controller
-	env    *config.Environment
-}
-
-type environment struct {
-	Port int64 `envconfig:"PORT" default:"8080"`
+	// logger *zap.Logger
+	web web.Controller
+	env *config.Environment
 }
 
 func Run() error {
@@ -41,11 +36,12 @@ func Run() error {
 	server := http.NewHTTPServer(router.Handler(), app.env.Port)
 
 	eg, ectx := errgroup.WithContext(ctx)
-	eg.Go(func() (err error) {
-		if err = server.Serve(); err != nil {
+	eg.Go(func() error {
+		if err := server.Serve(); err != nil {
 			log.Fatalf("listen: %s\n", err)
+			return nil
 		}
-		return
+		return nil
 	})
 
 	// graceful shutdown
@@ -61,7 +57,7 @@ func Run() error {
 	}
 
 	if err := server.Stop(ctx); err != nil {
-		log.Fatal("Server Shutdown:", err)
+		fmt.Printf("Server Shutdown: %s", err)
 		return err
 	}
 	return eg.Wait()

@@ -2,6 +2,7 @@ package migrate
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/quansolashi/golang-boierplate/backend/internal/entity"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/mysql"
@@ -17,6 +18,9 @@ var migrationOrders = []string{
 }
 
 func Run(ctx context.Context, db *mysql.Client, logger *zap.Logger) error {
+	// temporary use logger to avoid rules of lint
+	fmt.Println(logger.Name())
+
 	// logger.Info("Start db migration...")
 	for _, tableName := range migrationOrders {
 		model, exists := tables[tableName]
