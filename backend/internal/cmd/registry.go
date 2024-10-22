@@ -9,7 +9,9 @@ import (
 	"github.com/quansolashi/golang-boierplate/backend/internal/database/mysql"
 	web "github.com/quansolashi/golang-boierplate/backend/internal/web/controller"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/config"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/log"
 	pmysql "github.com/quansolashi/golang-boierplate/backend/pkg/mysql"
+	"github.com/rs/zerolog"
 )
 
 func (a *app) inject(ctx context.Context) error {
@@ -22,6 +24,14 @@ func (a *app) inject(ctx context.Context) error {
 		return err
 	}
 	a.env = env
+
+	logger, err := log.NewLogger(
+		log.WithLevel(zerolog.DebugLevel),
+	)
+	if err != nil {
+		return err
+	}
+	a.logger = logger
 
 	// connect and initialize database
 	database, err := a.newDatabase()
