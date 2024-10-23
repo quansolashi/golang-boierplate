@@ -8,6 +8,7 @@ import (
 )
 
 func (c *controller) userRoutes(rg *gin.RouterGroup) {
+	rg.Use(c.authentication)
 	rg.GET("", c.userIndex)
 	rg.GET("/:userId", c.showUser)
 }
@@ -15,8 +16,9 @@ func (c *controller) userRoutes(rg *gin.RouterGroup) {
 func (c *controller) userIndex(ctx *gin.Context) {
 	users, err := c.db.User.List(ctx)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, err)
+		c.httpError(ctx, err)
 	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"data": users,
 	})
@@ -25,13 +27,14 @@ func (c *controller) userIndex(ctx *gin.Context) {
 func (c *controller) showUser(ctx *gin.Context) {
 	userID, err := util.GetParamUint64(ctx, "userId")
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, err)
+		c.badRequest(ctx, err)
 	}
 
 	user, err := c.db.User.Get(ctx, userID)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, err)
+		c.httpError(ctx, err)
 	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"data": user,
 	})

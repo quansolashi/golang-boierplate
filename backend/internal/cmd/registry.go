@@ -40,7 +40,8 @@ func (a *app) inject(ctx context.Context) error {
 	}
 	// app web controller
 	a.web = web.NewController(&web.Params{
-		DB: database,
+		DB:               database,
+		LocalTokenSecret: a.env.LocalTokenSecret,
 	})
 
 	return nil
