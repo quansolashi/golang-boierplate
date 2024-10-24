@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-// ErrorResponse - エラーレスポンス
+// ErrorResponse - エラーレスポンス.
 type ErrorResponse struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`

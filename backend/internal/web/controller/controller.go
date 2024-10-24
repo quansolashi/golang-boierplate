@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -42,12 +43,12 @@ func (c *controller) Routes(rg *gin.RouterGroup) {
 func (c *controller) authentication(ctx *gin.Context) {
 	token := ctx.Request.Header.Get("Authorization")
 	if token == "" {
-		c.unauthorized(ctx, fmt.Errorf("auth: token is not found"))
+		c.unauthorized(ctx, errors.New("auth: token is not found"))
 		return
 	}
 	tokenString := strings.Split(token, "Bearer ")
 	if len(tokenString) < 2 {
-		c.unauthorized(ctx, fmt.Errorf("auth: token is invalid"))
+		c.unauthorized(ctx, errors.New("auth: token is invalid"))
 		return
 	}
 
@@ -60,6 +61,7 @@ func (c *controller) authentication(ctx *gin.Context) {
 	ctx.Next()
 }
 
+//nolint:unused // use later
 func (c *controller) getUserID(ctx *gin.Context) (uint64, error) {
 	userID := ctx.GetHeader("userId")
 	if userID == "" {
@@ -68,6 +70,7 @@ func (c *controller) getUserID(ctx *gin.Context) (uint64, error) {
 	return strconv.ParseUint(userID, 10, 64)
 }
 
+//nolint:unused // use later
 func (c *controller) currentUser(ctx *gin.Context) (*entity.User, error) {
 	userID, err := c.getUserID(ctx)
 	if err != nil {
