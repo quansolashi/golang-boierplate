@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:1.27.0-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    volumes:
+      - ./infra/nginx/go-boier.conf:/etc/nginx/conf.d/go-boier.conf
+      - ./infra/mkcert:/opt/mkcert
+  mysql:
+    image: mysql:8.0
+    ports:
+      - 3006:3006
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: msx-mysql
+    restart: always
+    volumes:
+      - ./db/mysql_data:/var/lib/mysql
+  backend:
+    working_dir: /go/src/github.com/quansolashi/golang-boierplate/backend
+    depends_on:
+      - mysql
+    build: 
+      context: ./backend
+    ports:
+      - 3002:3002
+    volumes:
+      - ./backend:/go/src/github.com/quansolashi/golang-boierplate/backend:cached
+    env_file: ./backend/.env
+    restart: always
+    command: make dev

@@ -1,0 +1,8 @@
+# build file
+app
+
+# temp file
+tmp
+
+# golang output binary directory
+bin
