@@ -27,7 +27,7 @@ jobs:
           fail_on_error: true
   
   build:
-    name: lint
+    name: build
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -59,6 +59,7 @@ jobs:
         run: go mod download
       
       - name: Build
+        working-directory: ./backend
         run: make build
 
   test:
