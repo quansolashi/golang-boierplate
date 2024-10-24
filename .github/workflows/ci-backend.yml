@@ -1,0 +1,98 @@
+name: 'Build and lint for Backend'
+on: 
+  pull_request: 
+    paths: 
+      - 'backend/**/*'
+      - .github/workflows/ci-backend.yml
+jobs:
+  lint:
+    name: lint
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: golangci-lint
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          workdir: ./backend
+          filter_mode: diff_context
+          fail_on_error: true
+  
+  build:
+    name: lint
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Golang version
+        id: set-version
+        shell: bash
+        working-directory: ./backend
+        run: |
+          GO_VERSION=$(cat .tool-versions | grep -E '^golang [0-9.]+$' | awk '{print substr($0, index($0, " ") + 1)}')
+          echo "go-version=${GO_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Setup Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ steps.set-version.outputs.go-version }}
+
+      - name: Download modules
+        shell: bash
+        working-directory: ./backend
+        run: go mod download
+      
+      - name: Build
+        run: make build
+
+  test:
+    name: test
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./backend
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Golang version
+      id: set-version
+      shell: bash
+      working-directory: ./backend
+      run: |
+        GO_VERSION=$(cat .tool-versions | grep -E '^golang [0-9.]+$' | awk '{print substr($0, index($0, " ") + 1)}')
+        echo "go-version=${GO_VERSION}" >> $GITHUB_OUTPUT
+
+    - name: Setup Golang
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ steps.set-version.outputs.go-version }}
+
+    - name: Download modules
+      shell: bash
+      working-directory: ./backend
+      run: go mod download
+
+    - name: Test
+      run: make test
