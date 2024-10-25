@@ -24,7 +24,7 @@ func (u *user) List(ctx context.Context) (entity.Users, error) {
 	stmt := u.db.DB.WithContext(ctx).Table("users")
 
 	err := stmt.Find(&users).Error
-	return users, err
+	return users, dbError(err)
 }
 
 func (u *user) Get(ctx context.Context, userID uint64) (*entity.User, error) {
@@ -36,4 +36,15 @@ func (u *user) Get(ctx context.Context, userID uint64) (*entity.User, error) {
 
 	err := stmt.First(&user).Error
 	return user, err
+}
+
+func (u *user) GetByEmail(ctx context.Context, email string) (*entity.User, error) {
+	var user *entity.User
+
+	stmt := u.db.DB.WithContext(ctx).
+		Table("users").
+		Where("email", email)
+
+	err := stmt.First(&user).Error
+	return user, dbError(err)
 }
