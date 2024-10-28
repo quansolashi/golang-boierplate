@@ -42,6 +42,9 @@ func (a *app) inject(ctx context.Context) error {
 	a.web = web.NewController(&web.Params{
 		DB:               database,
 		LocalTokenSecret: a.env.LocalTokenSecret,
+		WebURL:           a.env.WebURL,
+		GoogleAPIKey:     a.env.GoogleAPIKey,
+		GoogleAPISecret:  a.env.GoogleAPISecret,
 	})
 
 	return nil

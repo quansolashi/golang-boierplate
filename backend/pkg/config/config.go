@@ -12,9 +12,12 @@ type Environment struct {
 	DBDatabase            string `envconfig:"DB_DATABASE" default:""`
 	DBUsername            string `envconfig:"DB_USERNAME" default:"root"`
 	DBPassword            string `envconfig:"DB_PASSWORD" default:""`
+	WebURL                string `envconfig:"WEB_URL" default:""`
 	LocalTokenSecret      string `envconfig:"LOCAL_TOKEN_SECRET" default:""`
 	PublicTokenPublicKey  string `envconfig:"PUBLIC_TOKEN_PUBLIC_KEY" default:""`
 	PublicTokenPrivateKey string `envconfig:"PUBLIC_TOKEN_PRIVATE_KEY" default:""`
+	GoogleAPIKey          string `envconfig:"GOOGLE_API_KEY" default:""`
+	GoogleAPISecret       string `envconfig:"GOOGLE_API_SECRET" default:""`
 }
 
 type Client interface {

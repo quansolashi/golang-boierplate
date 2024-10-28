@@ -7,10 +7,15 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/markbates/goth/providers/google"
 	"github.com/quansolashi/golang-boierplate/backend/internal/database"
 	"github.com/quansolashi/golang-boierplate/backend/internal/entity"
 	"github.com/quansolashi/golang-boierplate/backend/internal/util"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/auth"
+)
+
+const (
+	loginWithGoogleCallbackURL string = "/callback/google"
 )
 
 type Controller interface {
@@ -20,17 +25,28 @@ type Controller interface {
 type Params struct {
 	DB               *database.Database
 	LocalTokenSecret string
+	GoogleAPIKey     string
+	GoogleAPISecret  string
+	WebURL           string
 }
 
 type controller struct {
-	db   *database.Database
-	auth auth.LocalClient
+	db     *database.Database
+	auth   auth.LocalClient
+	google *google.Provider
 }
 
 func NewController(params *Params) Controller {
 	return &controller{
 		db:   params.DB,
 		auth: auth.NewLocalClient(params.LocalTokenSecret),
+		google: google.New(
+			params.GoogleAPIKey,
+			params.GoogleAPISecret,
+			fmt.Sprintf("%s%s", params.WebURL, loginWithGoogleCallbackURL),
+			"email",
+			"profile",
+		),
 	}
 }
 

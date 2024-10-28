@@ -1,9 +1,13 @@
 package controller
 
 import (
+	"context"
 	"errors"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/markbates/goth"
+	"github.com/markbates/goth/gothic"
 	"github.com/quansolashi/golang-boierplate/backend/internal/database"
 	"github.com/quansolashi/golang-boierplate/backend/internal/entity"
 	"github.com/quansolashi/golang-boierplate/backend/internal/web/request"
@@ -13,6 +17,8 @@ import (
 
 func (c *controller) authRoutes(rg *gin.RouterGroup) {
 	rg.POST("/login", c.login)
+	rg.GET("/google", c.loginWithGoogle)
+	rg.POST("/google/callback", c.loginWithGoogleCallback)
 }
 
 func (c *controller) login(ctx *gin.Context) {
@@ -46,6 +52,40 @@ func (c *controller) login(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{
 		"data": res,
 	})
+}
+
+func (c *controller) loginWithGoogle(ctx *gin.Context) {
+	ctx.Request = c.getContextWithGoogle(ctx)
+	gothic.BeginAuthHandler(ctx.Writer, ctx.Request)
+}
+
+func (c *controller) loginWithGoogleCallback(ctx *gin.Context) {
+	ctx.Request = c.getContextWithGoogle(ctx)
+
+	auth, err := gothic.CompleteUserAuth(ctx.Writer, ctx.Request)
+	if err != nil {
+		c.unauthorized(ctx, err)
+		return
+	}
+	user, err := c.db.User.GetByEmail(ctx, auth.Email)
+	if err != nil {
+		c.httpError(ctx, err)
+		return
+	}
+
+	res, err := c.newUserInfo(user)
+	if err != nil {
+		c.httpError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *controller) getContextWithGoogle(ctx *gin.Context) *http.Request {
+	const key, value string = "provider", "google"
+	goth.UseProviders(c.google)
+	//nolint:revive,staticcheck // variables must be string
+	return ctx.Request.WithContext(context.WithValue(ctx.Request.Context(), key, value))
 }
 
 func (c *controller) newUserInfo(user *entity.User) (*response.LoginResponse, error) {
