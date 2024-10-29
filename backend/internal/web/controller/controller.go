@@ -12,6 +12,7 @@ import (
 	"github.com/quansolashi/golang-boierplate/backend/internal/entity"
 	"github.com/quansolashi/golang-boierplate/backend/internal/util"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/auth"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/redis"
 )
 
 const (
@@ -24,6 +25,7 @@ type Controller interface {
 
 type Params struct {
 	DB               *database.Database
+	Redis            *redis.Client
 	LocalTokenSecret string
 	GoogleAPIKey     string
 	GoogleAPISecret  string
@@ -32,14 +34,16 @@ type Params struct {
 
 type controller struct {
 	db     *database.Database
+	redis  *redis.Client
 	auth   auth.LocalClient
 	google *google.Provider
 }
 
 func NewController(params *Params) Controller {
 	return &controller{
-		db:   params.DB,
-		auth: auth.NewLocalClient(params.LocalTokenSecret),
+		db:    params.DB,
+		redis: params.Redis,
+		auth:  auth.NewLocalClient(params.LocalTokenSecret),
 		google: google.New(
 			params.GoogleAPIKey,
 			params.GoogleAPISecret,

@@ -11,6 +11,7 @@ import (
 	"github.com/quansolashi/golang-boierplate/backend/pkg/config"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/log"
 	pmysql "github.com/quansolashi/golang-boierplate/backend/pkg/mysql"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/redis"
 	"github.com/rs/zerolog"
 )
 
@@ -38,9 +39,13 @@ func (a *app) inject(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	redis := a.newRedisDatabase()
+
 	// app web controller
 	a.web = web.NewController(&web.Params{
 		DB:               database,
+		Redis:            redis,
 		LocalTokenSecret: a.env.LocalTokenSecret,
 		WebURL:           a.env.WebURL,
 		GoogleAPIKey:     a.env.GoogleAPIKey,
@@ -80,4 +85,16 @@ func (a *app) newDatabase() (*database.Database, error) {
 		return nil, err
 	}
 	return mysql.NewDatabase(client), nil
+}
+
+func (a *app) newRedisDatabase() *redis.Client {
+	params := &redis.Params{
+		Address:  fmt.Sprintf("%s:%d", a.env.RedisDBHost, a.env.RedisDBPort),
+		Password: a.env.RedisDBPassword,
+	}
+	opts := []redis.Option{
+		redis.WithMaxRetries(3),
+	}
+	client := redis.NewClient(params, opts...)
+	return client
 }

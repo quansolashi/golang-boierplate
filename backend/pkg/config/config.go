@@ -18,6 +18,9 @@ type Environment struct {
 	PublicTokenPrivateKey string `envconfig:"PUBLIC_TOKEN_PRIVATE_KEY" default:""`
 	GoogleAPIKey          string `envconfig:"GOOGLE_API_KEY" default:""`
 	GoogleAPISecret       string `envconfig:"GOOGLE_API_SECRET" default:""`
+	RedisDBHost           string `envconfig:"REDIS_DB_HOST" default:"127.0.0.1"`
+	RedisDBPort           int64  `envconfig:"REDIS_DB_PORT" default:"6379"`
+	RedisDBPassword       string `envconfig:"REDIS_DB_PASSWORD" default:""`
 }
 
 type Client interface {

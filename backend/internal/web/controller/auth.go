@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/markbates/goth"
@@ -44,7 +46,16 @@ func (c *controller) login(ctx *gin.Context) {
 		return
 	}
 
-	res, err := c.newUserInfo(user)
+	//temporary: write login time to redis
+	userIDStr := strconv.FormatUint(user.ID, 10)
+	layout := "2006-01-02 15:04:05"
+	err = c.redis.Set(ctx, userIDStr, time.Now().Format(layout))
+	if err != nil {
+		c.httpError(ctx, err)
+		return
+	}
+
+	res, err := c.newUserInfo(ctx, user)
 	if err != nil {
 		c.httpError(ctx, err)
 		return
@@ -73,7 +84,7 @@ func (c *controller) loginWithGoogleCallback(ctx *gin.Context) {
 		return
 	}
 
-	res, err := c.newUserInfo(user)
+	res, err := c.newUserInfo(ctx, user)
 	if err != nil {
 		c.httpError(ctx, err)
 		return
@@ -88,17 +99,30 @@ func (c *controller) getContextWithGoogle(ctx *gin.Context) *http.Request {
 	return ctx.Request.WithContext(context.WithValue(ctx.Request.Context(), key, value))
 }
 
-func (c *controller) newUserInfo(user *entity.User) (*response.LoginResponse, error) {
+func (c *controller) newUserInfo(ctx context.Context, user *entity.User) (*response.LoginResponse, error) {
 	token, err := c.auth.CreateAccessToken(user.ID)
 	if err != nil {
 		return nil, err
 	}
 
+	//temporary: get last accessed at of user from redis
+	userIDStr := strconv.FormatUint(user.ID, 10)
+	accessedAtStr, err := c.redis.Get(ctx, userIDStr)
+	if err != nil {
+		return nil, err
+	}
+	layout := "2006-01-02 15:04:05"
+	accessedAt, err := time.Parse(layout, accessedAtStr.(string))
+	if err != nil {
+		return nil, err
+	}
+
 	res := &response.LoginResponse{
-		ID:          user.ID,
-		Name:        user.Name,
-		Email:       user.Email,
-		AccessToken: token,
+		ID:             user.ID,
+		Name:           user.Name,
+		Email:          user.Email,
+		AccessToken:    token,
+		LastAccessedAt: accessedAt,
 	}
 	return res, nil
 }
