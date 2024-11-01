@@ -11,6 +11,8 @@ import (
 	web "github.com/quansolashi/golang-boierplate/backend/internal/web/controller"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/config"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/http"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/rabbitmq"
+	"github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"golang.org/x/sync/errgroup"
 )
@@ -18,6 +20,7 @@ import (
 type app struct {
 	logger zerolog.Logger
 	web    web.Controller
+	queue  rabbitmq.Client
 	env    *config.Environment
 }
 
@@ -46,6 +49,11 @@ func Run() error {
 
 	app.logger.Info().Int64("port", app.env.Port).Send()
 
+	// check queue
+	if err := app.checkQueue(ctx); err != nil {
+		return err
+	}
+
 	// graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
@@ -53,6 +61,7 @@ func Run() error {
 	case <-ectx.Done():
 		app.logger.Warn().Err(ectx.Err()).Send()
 	case signal := <-quit:
+		app.queue.Close() // close message queue
 		app.logger.Info().Any("Shutdown Server ...", signal).Send()
 		delay := time.Duration(5) * time.Second
 		time.Sleep(delay)
@@ -63,4 +72,19 @@ func Run() error {
 		return err
 	}
 	return eg.Wait()
+}
+
+func (a *app) checkQueue(ctx context.Context) error {
+	queue, err := a.queue.DeclareQueue(&rabbitmq.QueueParams{QueueName: "queue"})
+	if err != nil {
+		return fmt.Errorf("cmd: failed to create queue: %w", err)
+	}
+
+	// Consume messages from the queue
+	return a.queue.Consume(ctx, &rabbitmq.ConsumeParams{QueueName: queue.Name}, func(message amqp091.Delivery) {
+		a.logger.Debug().Str("queue_message", string(message.Body)).Send()
+		if ackErr := message.Ack(false); ackErr != nil {
+			a.logger.Warn().AnErr("Failed to ack message", ackErr).Send()
+		}
+	})
 }

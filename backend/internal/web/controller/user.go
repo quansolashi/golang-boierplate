@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/quansolashi/golang-boierplate/backend/internal/util"
+	"github.com/quansolashi/golang-boierplate/backend/internal/web/service"
 )
 
 func (c *controller) userRoutes(rg *gin.RouterGroup) {
@@ -19,8 +20,9 @@ func (c *controller) userIndex(ctx *gin.Context) {
 		c.httpError(ctx, err)
 	}
 
+	res := service.NewUsers(users).Response()
 	ctx.JSON(http.StatusOK, gin.H{
-		"data": users,
+		"data": res,
 	})
 }
 
@@ -35,7 +37,8 @@ func (c *controller) showUser(ctx *gin.Context) {
 		c.httpError(ctx, err)
 	}
 
+	res := service.NewUser(user).Response()
 	ctx.JSON(http.StatusOK, gin.H{
-		"data": user,
+		"data": res,
 	})
 }

@@ -7,10 +7,17 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/markbates/goth/providers/google"
 	"github.com/quansolashi/golang-boierplate/backend/internal/database"
 	"github.com/quansolashi/golang-boierplate/backend/internal/entity"
 	"github.com/quansolashi/golang-boierplate/backend/internal/util"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/auth"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/rabbitmq"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/redis"
+)
+
+const (
+	loginWithGoogleCallbackURL string = "/callback/google"
 )
 
 type Controller interface {
@@ -19,25 +26,44 @@ type Controller interface {
 
 type Params struct {
 	DB               *database.Database
+	Redis            *redis.Client
+	RabbitMQ         rabbitmq.Client
 	LocalTokenSecret string
+	GoogleAPIKey     string
+	GoogleAPISecret  string
+	WebURL           string
 }
 
 type controller struct {
-	db   *database.Database
-	auth auth.LocalClient
+	db     *database.Database
+	redis  *redis.Client
+	auth   auth.LocalClient
+	google *google.Provider
+	queue  rabbitmq.Client
 }
 
 func NewController(params *Params) Controller {
 	return &controller{
-		db:   params.DB,
-		auth: auth.NewLocalClient(params.LocalTokenSecret),
+		db:    params.DB,
+		redis: params.Redis,
+		auth:  auth.NewLocalClient(params.LocalTokenSecret),
+		google: google.New(
+			params.GoogleAPIKey,
+			params.GoogleAPISecret,
+			fmt.Sprintf("%s%s", params.WebURL, loginWithGoogleCallbackURL),
+			"email",
+			"profile",
+		),
+		queue: params.RabbitMQ,
 	}
 }
 
 func (c *controller) Routes(rg *gin.RouterGroup) {
 	c.heartbeatRoutes(rg.Group("/heartbeat"))
 
+	c.authRoutes(rg.Group("/auth"))
 	c.userRoutes(rg.Group("/users"))
+	c.queueRoutes(rg.Group("/queues"))
 }
 
 func (c *controller) authentication(ctx *gin.Context) {
