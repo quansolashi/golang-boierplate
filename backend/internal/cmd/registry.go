@@ -11,6 +11,7 @@ import (
 	"github.com/quansolashi/golang-boierplate/backend/pkg/config"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/log"
 	pmysql "github.com/quansolashi/golang-boierplate/backend/pkg/mysql"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/rabbitmq"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/redis"
 	"github.com/rs/zerolog"
 )
@@ -42,10 +43,17 @@ func (a *app) inject(ctx context.Context) error {
 
 	redis := a.newRedisDatabase()
 
+	rabbitmq, err := a.newRabbitMQ()
+	if err != nil {
+		return err
+	}
+	a.queue = rabbitmq
+
 	// app web controller
 	a.web = web.NewController(&web.Params{
 		DB:               database,
 		Redis:            redis,
+		RabbitMQ:         rabbitmq,
 		LocalTokenSecret: a.env.LocalTokenSecret,
 		WebURL:           a.env.WebURL,
 		GoogleAPIKey:     a.env.GoogleAPIKey,
@@ -97,4 +105,27 @@ func (a *app) newRedisDatabase() *redis.Client {
 	}
 	client := redis.NewClient(params, opts...)
 	return client
+}
+
+func (a *app) newRabbitMQ() (rabbitmq.Client, error) {
+	params := &rabbitmq.Params{
+		Host:     a.env.RabbitMQHost,
+		Port:     a.env.RabbitMQPort,
+		Username: a.env.RabbitMQUsername,
+		Password: a.env.RabbitMQPassword,
+	}
+	logger, err := log.NewLogger(
+		log.WithLevel(zerolog.DebugLevel),
+	)
+	if err != nil {
+		return nil, err
+	}
+	opts := []rabbitmq.Option{
+		rabbitmq.WithLogger(logger),
+	}
+	client, err := rabbitmq.NewRabbitMQ(params, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
 }

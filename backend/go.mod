@@ -23,6 +23,7 @@ require (
 	github.com/o1egl/paseto v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
 	github.com/redis/go-redis/v9 v9.7.0 // indirect
 	github.com/rs/cors v1.11.0 // indirect
 	github.com/rs/cors/wrapper/gin v0.0.0-20240515105523-1562b1715b35 // indirect

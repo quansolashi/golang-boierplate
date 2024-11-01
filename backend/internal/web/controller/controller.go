@@ -12,6 +12,7 @@ import (
 	"github.com/quansolashi/golang-boierplate/backend/internal/entity"
 	"github.com/quansolashi/golang-boierplate/backend/internal/util"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/auth"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/rabbitmq"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/redis"
 )
 
@@ -26,6 +27,7 @@ type Controller interface {
 type Params struct {
 	DB               *database.Database
 	Redis            *redis.Client
+	RabbitMQ         rabbitmq.Client
 	LocalTokenSecret string
 	GoogleAPIKey     string
 	GoogleAPISecret  string
@@ -37,6 +39,7 @@ type controller struct {
 	redis  *redis.Client
 	auth   auth.LocalClient
 	google *google.Provider
+	queue  rabbitmq.Client
 }
 
 func NewController(params *Params) Controller {
@@ -51,6 +54,7 @@ func NewController(params *Params) Controller {
 			"email",
 			"profile",
 		),
+		queue: params.RabbitMQ,
 	}
 }
 
@@ -59,6 +63,7 @@ func (c *controller) Routes(rg *gin.RouterGroup) {
 
 	c.authRoutes(rg.Group("/auth"))
 	c.userRoutes(rg.Group("/users"))
+	c.queueRoutes(rg.Group("/queues"))
 }
 
 func (c *controller) authentication(ctx *gin.Context) {

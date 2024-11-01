@@ -21,10 +21,32 @@ services:
     restart: always
     volumes:
       - ./db/mysql_data:/var/lib/mysql
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    environment:
+      - REDIS_DB_HOST=redis
+      - REDIS_DB_PASSWORD=password
+    volumes:
+      - ./db/redis_data:/data
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    restart: always
+    volumes:
+        - ./db/rabbitmq_data/:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: password
   backend:
     working_dir: /go/src/github.com/quansolashi/golang-boierplate/backend
     depends_on:
       - mysql
+      - redis
+      - rabbitmq
     build: 
       context: ./backend
     ports:
