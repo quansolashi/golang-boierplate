@@ -4,6 +4,8 @@ on:
     branches: 
     - develop
     paths: 
+    - '.github/workflows/_*.yaml'
+    - '.github/workflows/cd-backend.yaml'
     - 'backend/**/*'
   workflow_dispatch: 
 
