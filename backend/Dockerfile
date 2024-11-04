@@ -1,14 +1,29 @@
-FROM golang:1.22.0-alpine
+# ビルド用コンテナ
+FROM golang:1.23.0-alpine as builder
 
 ENV LANG C.UTF-8
 ENV TZ Asia/Tokyo
 
-ENV AIR_VERSION 1.41.0
+WORKDIR /go/src/github.com/quansolashi/golang-boierplate/backend
 
-WORKDIR /go/src/github.com/EdvFuture/edvpath/backend
-
-RUN apk add --update \
+RUN apk add --update --no-cache \
       git \
       make
 
-RUN go install github.com/cosmtrek/air@v${AIR_VERSION}
+COPY . .
+RUN make build
+
+# 実行用コンテナ
+FROM alpine
+
+ENV LANG C.UTF-8
+ENV TZ Asia/Tokyo
+
+RUN apk add --update --no-cache \
+      ca-certificates \
+      tzdata
+
+COPY --from=builder /go/src/github.com/quansolashi/golang-boierplate/backend/app /app
+
+EXPOSE 8080
+CMD ["./app"]
