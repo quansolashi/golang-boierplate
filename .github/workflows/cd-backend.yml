@@ -1,0 +1,20 @@
+name: 'Deploy Backend'
+on: 
+  push: 
+    branches: 
+    - develop
+    paths: 
+    - 'backend/**/*'
+  workflow_dispatch: 
+
+permissions: 
+  contents: 'read'
+
+jobs:
+  push_image:
+    name: Push image
+    uses: ./.github/workflows/_build_push_image.yaml
+    secrets: inherit
+    with:
+      environment: local
+      image-tag: local
