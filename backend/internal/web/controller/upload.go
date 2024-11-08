@@ -15,7 +15,7 @@ func (c *controller) uploadRoutes(rg *gin.RouterGroup) {
 	rg.POST("/single", c.uploadFile)
 }
 
-// FIXME: test with S3 storage
+// FIXME: test with S3 storage.
 func (c *controller) uploadFile(ctx *gin.Context) {
 	file, err := ctx.FormFile("file")
 	if err != nil {
