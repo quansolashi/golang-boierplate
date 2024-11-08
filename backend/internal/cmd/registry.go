@@ -48,6 +48,12 @@ func (a *app) inject(_ context.Context) error {
 	// }
 	// a.queue = rabbitmq
 
+	// s3 bucket storage
+	bucket, err := a.newS3Storage(ctx)
+	if err != nil {
+		return err
+	}
+
 	// app web controller
 	a.web = web.NewController(&web.Params{
 		DB:    database,

@@ -49,6 +49,7 @@ services:
       - rabbitmq
     build: 
       context: ./backend
+      dockerfile: Dockerfile.local
     ports:
       - 3002:3002
     volumes:
