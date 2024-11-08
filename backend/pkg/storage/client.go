@@ -16,7 +16,7 @@ import (
 
 type Bucket interface {
 	Upload(ctx context.Context, key string, body io.Reader, opts ...ObjectOption) error
-	GetPublicURL(ctx context.Context, key string) string
+	GetPublicURL(key string) string
 	GetPresignedURL(ctx context.Context, key string, expireDuration time.Duration) (string, error)
 }
 
@@ -83,7 +83,7 @@ func (c *bucket) Upload(ctx context.Context, key string, body io.Reader, opts ..
 	return nil
 }
 
-func (c *bucket) GetPublicURL(ctx context.Context, key string) string {
+func (c *bucket) GetPublicURL(key string) string {
 	u := &url.URL{
 		Scheme: "https",
 		Host:   fmt.Sprintf("s3.%s.amazonaws.com", c.region),
@@ -100,7 +100,7 @@ func (c *bucket) GetPresignedURL(ctx context.Context, key string, expireDuration
 		Key:    aws.String(key),
 	}, s3.WithPresignExpires(expireDuration))
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	return request.URL, nil
