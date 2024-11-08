@@ -14,7 +14,7 @@ services:
   mysql:
     image: mysql:8.0
     ports:
-      - 3006:3006
+      - 3008:3008
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: msx-mysql
@@ -49,6 +49,7 @@ services:
       - rabbitmq
     build: 
       context: ./backend
+      dockerfile: Dockerfile.local
     ports:
       - 3002:3002
     volumes:
