@@ -112,7 +112,11 @@ func (c *controller) newUserInfo(ctx context.Context, user *entity.User) (*respo
 		return nil, err
 	}
 	layout := "2006-01-02 15:04:05"
-	accessedAt, err := time.Parse(layout, accessedAtStr.(string))
+	accessedAtTime, ok := accessedAtStr.(string)
+	if !ok {
+		return nil, errors.New("controller: accessed_at is not valid")
+	}
+	accessedAt, err := time.Parse(layout, accessedAtTime)
 	if err != nil {
 		return nil, err
 	}
