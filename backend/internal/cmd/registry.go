@@ -13,6 +13,7 @@ import (
 	pmysql "github.com/quansolashi/golang-boierplate/backend/pkg/mysql"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/rabbitmq"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/redis"
+	"github.com/quansolashi/golang-boierplate/backend/pkg/storage"
 	"github.com/rs/zerolog"
 )
 
@@ -43,17 +44,25 @@ func (a *app) inject(ctx context.Context) error {
 
 	redis := a.newRedisDatabase()
 
+	// message queue
 	rabbitmq, err := a.newRabbitMQ()
 	if err != nil {
 		return err
 	}
 	a.queue = rabbitmq
 
+	// s3 bucket storage
+	bucket, err := a.newS3Storage(ctx)
+	if err != nil {
+		return err
+	}
+
 	// app web controller
 	a.web = web.NewController(&web.Params{
 		DB:               database,
 		Redis:            redis,
 		RabbitMQ:         rabbitmq,
+		Bucket:           bucket,
 		LocalTokenSecret: a.env.LocalTokenSecret,
 		WebURL:           a.env.WebURL,
 		GoogleAPIKey:     a.env.GoogleAPIKey,
@@ -128,4 +137,18 @@ func (a *app) newRabbitMQ() (rabbitmq.Client, error) {
 		return nil, err
 	}
 	return client, nil
+}
+
+func (a *app) newS3Storage(ctx context.Context) (storage.Bucket, error) {
+	params := &storage.Params{
+		BucketName:      a.env.S3BucketName,
+		Region:          a.env.AwsRegion,
+		AccessKeyID:     a.env.AwsAccessKey,
+		SecretAccessKey: a.env.AwsSecretKey,
+	}
+	bucket, err := storage.NewClient(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+	return bucket, nil
 }
