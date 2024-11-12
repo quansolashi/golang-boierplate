@@ -14,7 +14,7 @@ type User struct {
 	CreatedAt time.Time      `gorm:"not null;<-:create"`
 	UpdatedAt time.Time      `gorm:"not null"`
 	DeletedAt gorm.DeletedAt `gorm:"default:null"`
-	Profile   UserProfile    `gorm:"constraint:OnUpdate:cascade,OnDelete:cascade"` // one-to-one relationship, this is included as default in User data.
+	Profile   UserProfile    `gorm:"constraint:OnUpdate:cascade,OnDelete:cascade"` // 1:1
 	// Posts     []Post         `gorm:"foreignKey:AuthorID"` // FIXME: not required, enable if needed.
 }
 
