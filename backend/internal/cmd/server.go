@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	graph "github.com/quansolashi/golang-boierplate/backend/internal/graphql/handler"
 	web "github.com/quansolashi/golang-boierplate/backend/internal/web/controller"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/config"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/http"
@@ -22,6 +23,7 @@ type app struct {
 	web    web.Controller
 	queue  rabbitmq.Client
 	env    *config.Environment
+	graph  graph.Graph
 }
 
 func Run() error {

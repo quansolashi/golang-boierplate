@@ -12,5 +12,6 @@ func (a *app) newRouter() *gin.Engine {
 	rt.Use(ginzip.Gzip(ginzip.DefaultCompression))
 
 	a.web.Routes(rt.Group("/api"))
+	a.graph.Handler(rt.Group("/graphql"))
 	return rt
 }

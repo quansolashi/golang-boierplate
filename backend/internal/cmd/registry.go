@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/quansolashi/golang-boierplate/backend/ent"
 	"github.com/quansolashi/golang-boierplate/backend/internal/database"
 	"github.com/quansolashi/golang-boierplate/backend/internal/database/mysql"
+	graph "github.com/quansolashi/golang-boierplate/backend/internal/graphql/handler"
 	web "github.com/quansolashi/golang-boierplate/backend/internal/web/controller"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/config"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/log"
@@ -58,6 +60,16 @@ func (a *app) inject(ctx context.Context) error {
 		WebURL:           a.env.WebURL,
 		GoogleAPIKey:     a.env.GoogleAPIKey,
 		GoogleAPISecret:  a.env.GoogleAPISecret,
+	})
+
+	// graphql
+	ent, err := a.newEntClient()
+	if err != nil {
+		return err
+	}
+	a.graph = graph.NewGraph(&graph.Params{
+		LocalTokenSecret: a.env.LocalTokenSecret,
+		Ent:              ent,
 	})
 
 	return nil
@@ -124,6 +136,26 @@ func (a *app) newRabbitMQ() (rabbitmq.Client, error) {
 		rabbitmq.WithLogger(logger),
 	}
 	client, err := rabbitmq.NewRabbitMQ(params, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
+}
+
+func (a *app) newEntClient() (*ent.Client, error) {
+	params := &pmysql.Params{
+		Socket:   a.env.DBSocket,
+		Host:     a.env.DBHost,
+		Port:     a.env.DBPort,
+		Database: a.env.DBDatabase,
+		Username: a.env.DBUsername,
+		Password: a.env.DBPassword,
+	}
+	opts := []pmysql.Option{
+		pmysql.WithNow(time.Now),
+		pmysql.WithLocation(time.Now().Location()),
+	}
+	client, err := pmysql.NewEntClient(params, opts...)
 	if err != nil {
 		return nil, err
 	}

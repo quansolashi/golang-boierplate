@@ -1,0 +1,23 @@
+extend type Query {
+  Users: [User!]!
+	User(ID: Uint64!): User!
+	Me: User!
+}
+
+extend type Mutation {
+	CreateUser(input: CreateUserInput!): User!
+}
+
+type User {
+	id:        Uint64!
+	name:      String!
+	email:     String!
+}
+
+input CreateUserInput {
+  name:      String!
+	email:     String!
+  password:  String!
+}
+
+scalar Uint64

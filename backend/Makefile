@@ -1,4 +1,4 @@
-.PHONY: help setup install mockgen protoc fmt vet lint test build dev
+.PHONY: help setup install gqlgen entdesc entgen protoc fmt vet lint test build dev 
 
 GOLANGCI_VERSION := 1.57.2
 MOCKGEN_VERSION := 0.4.0
@@ -12,9 +12,14 @@ setup: install
 install:
 	go install go.uber.org/mock/mockgen@v${MOCKGEN_VERSION}
 
-mockgen:
-	rm -rf ./mock
-	go generate ./...
+gqlgen:
+	go run github.com/99designs/gqlgen generate
+
+entdesc:
+	go run -mod=mod entgo.io/ent/cmd/ent describe ./ent/schema
+
+entgen:
+	go generate ./ent
 
 fmt:
 	! gofmt -d -s ./pkg | grep '^'

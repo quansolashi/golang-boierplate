@@ -35,7 +35,7 @@ func (u *user) Get(ctx context.Context, userID uint64) (*entity.User, error) {
 		Where("id", userID)
 
 	err := stmt.First(&user).Error
-	return user, err
+	return user, dbError(err)
 }
 
 func (u *user) GetByEmail(ctx context.Context, email string) (*entity.User, error) {
