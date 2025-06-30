@@ -1,4 +1,4 @@
-.PHONY: help setup install gqlgen entdesc entgen protoc fmt vet lint test build dev 
+.PHONY: help setup install gqlgen entdesc entgen protoc fmt vet lint test build dev protoc
 
 GOLANGCI_VERSION := 1.57.2
 MOCKGEN_VERSION := 0.4.0
@@ -38,3 +38,6 @@ build:
 
 dev:
 	air -c ./.air.toml
+
+protoc:
+	protoc --proto_path=proto proto/*.proto --go_out=pkg/proto/ --go_opt=paths=source_relative --go-grpc_out=pkg/proto/ --go-grpc_opt=paths=source_relative
