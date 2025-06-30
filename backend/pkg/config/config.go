@@ -6,6 +6,7 @@ import (
 
 type Environment struct {
 	Port                  int64  `envconfig:"PORT" default:"8080"`
+	GrpcPort              int64  `envconfig:"GRPC_PORT" default:"5001"`
 	DBSocket              string `envconfig:"DB_SOCKET" default:"tcp"`
 	DBHost                string `envconfig:"DB_HOST" default:"127.0.0.1"`
 	DBPort                string `envconfig:"DB_PORT" default:"3306"`

@@ -3,12 +3,14 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	graph "github.com/quansolashi/golang-boierplate/backend/internal/graphql/handler"
+	grpc "github.com/quansolashi/golang-boierplate/backend/internal/proto/server"
 	web "github.com/quansolashi/golang-boierplate/backend/internal/web/controller"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/config"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/http"
@@ -21,6 +23,7 @@ import (
 type app struct {
 	logger zerolog.Logger
 	web    web.Controller
+	grpc   *grpc.Server
 	queue  rabbitmq.Client
 	env    *config.Environment
 	graph  graph.Graph
@@ -51,6 +54,21 @@ func Run() error {
 
 	app.logger.Info().Int64("port", app.env.Port).Send()
 
+	// start grpc server in a goroutine
+	grpcListener, err := net.Listen("tcp", fmt.Sprintf(":%d", app.env.GrpcPort))
+	if err != nil {
+		app.logger.Warn().AnErr("Failed to listen grpc server", err).Send()
+		return err
+	}
+	eg.Go(func() error {
+		if err := app.grpc.Grpc.Serve(grpcListener); err != nil {
+			app.logger.Warn().AnErr("Failed to start grpc server", err).Send()
+			return err
+		}
+		return nil
+	})
+	app.logger.Info().Int64("grpc port", app.env.GrpcPort).Send()
+
 	// check queue
 	if err := app.checkQueue(ctx); err != nil {
 		return err
@@ -73,6 +91,7 @@ func Run() error {
 		app.logger.Error().AnErr("Failed to stopped http server", err).Send()
 		return err
 	}
+	app.grpc.Grpc.GracefulStop()
 	return eg.Wait()
 }
 

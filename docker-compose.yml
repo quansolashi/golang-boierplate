@@ -49,8 +49,10 @@ services:
       - rabbitmq
     build: 
       context: ./backend
+      dockerfile: Dockerfile.local
     ports:
       - 3002:3002
+      - 5001:5001
     volumes:
       - ./backend:/go/src/github.com/quansolashi/golang-boierplate/backend:cached
     env_file: ./backend/.env

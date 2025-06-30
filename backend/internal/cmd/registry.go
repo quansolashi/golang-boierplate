@@ -9,6 +9,7 @@ import (
 	"github.com/quansolashi/golang-boierplate/backend/internal/database"
 	"github.com/quansolashi/golang-boierplate/backend/internal/database/mysql"
 	graph "github.com/quansolashi/golang-boierplate/backend/internal/graphql/handler"
+	"github.com/quansolashi/golang-boierplate/backend/internal/proto/server"
 	web "github.com/quansolashi/golang-boierplate/backend/internal/web/controller"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/config"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/log"
@@ -71,6 +72,11 @@ func (a *app) inject(ctx context.Context) error {
 		LocalTokenSecret: a.env.LocalTokenSecret,
 		Ent:              ent,
 	})
+
+	grpc := server.NewGrpcServer(&server.Params{
+		DB: database,
+	})
+	a.grpc = grpc
 
 	return nil
 }

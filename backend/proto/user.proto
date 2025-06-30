@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package backend.user;
+option go_package = "github.com/quansolashi/golang-boierplate/backend/pkg/proto";
+
+service UserService {
+  rpc GetUser (UserRequest) returns (User);
+}
+
+message UserRequest {
+  uint64 id = 1;
+}
+
+message User {
+  uint64 id = 1;
+  string name = 2;
+  string email = 3;
+}
