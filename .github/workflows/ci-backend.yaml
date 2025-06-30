@@ -23,8 +23,9 @@ jobs:
         uses: reviewdog/action-golangci-lint@v2
         with:
           workdir: ./backend
+          golangci_lint_flags: "--config=.golangci.yaml"
           filter_mode: diff_context
-          fail_on_error: true
+          fail_level: true
   
   build:
     name: build
