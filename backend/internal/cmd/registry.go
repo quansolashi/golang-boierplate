@@ -19,9 +19,6 @@ import (
 )
 
 func (a *app) inject(ctx context.Context) error {
-	// temporary print ctx to avoid rules by lint
-	fmt.Println(ctx.Value(""))
-
 	// load environment variables
 	env, err := a.loadEnv()
 	if err != nil {
@@ -45,17 +42,17 @@ func (a *app) inject(ctx context.Context) error {
 
 	redis := a.newRedisDatabase()
 
-	rabbitmq, err := a.newRabbitMQ()
-	if err != nil {
-		return err
-	}
-	a.queue = rabbitmq
+	// rabbitmq, err := a.newRabbitMQ()
+	// if err != nil {
+	// 	return err
+	// }
+	// a.queue = rabbitmq
 
 	// app web controller
 	a.web = web.NewController(&web.Params{
-		DB:               database,
-		Redis:            redis,
-		RabbitMQ:         rabbitmq,
+		DB:    database,
+		Redis: redis,
+		// RabbitMQ:         rabbitmq,
 		LocalTokenSecret: a.env.LocalTokenSecret,
 		WebURL:           a.env.WebURL,
 		GoogleAPIKey:     a.env.GoogleAPIKey,

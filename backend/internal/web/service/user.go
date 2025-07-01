@@ -33,7 +33,7 @@ func NewUsers(users []*entity.User) Users {
 	return res
 }
 
-func (us Users) Response() []*response.User {
+func (us Users) Response() response.Users {
 	res := make([]*response.User, len(us))
 	for i := range us {
 		res[i] = us[i].Response()

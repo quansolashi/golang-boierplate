@@ -23,6 +23,16 @@ func (c *controller) authRoutes(rg *gin.RouterGroup) {
 	rg.POST("/google/callback", c.loginWithGoogleCallback)
 }
 
+// @Summary     login
+// @Description login
+// @Tags        Auth
+// @Router      /auth/login [post]
+// @Param       request body request.LoginRequest true "LoginRequest"
+// @Accept      json
+// @Produce     json
+// @Success     200 {object} response.LoginResponse
+// @Failure     400 {object} util.ErrorResponse
+// @Failure     401 {object} util.ErrorResponse
 func (c *controller) login(ctx *gin.Context) {
 	req := &request.LoginRequest{}
 	err := ctx.ShouldBindJSON(req)
@@ -70,6 +80,15 @@ func (c *controller) loginWithGoogle(ctx *gin.Context) {
 	gothic.BeginAuthHandler(ctx.Writer, ctx.Request)
 }
 
+// @Summary     login with Google callback
+// @Description login with Google callback
+// @Tags        Auth
+// @Router      /auth/login/google/callback [post]
+// @Accept      json
+// @Produce     json
+// @Success     200 {object} response.LoginResponse
+// @Failure     400 {object} util.ErrorResponse
+// @Failure     401 {object} util.ErrorResponse
 func (c *controller) loginWithGoogleCallback(ctx *gin.Context) {
 	ctx.Request = c.getContextWithGoogle(ctx)
 

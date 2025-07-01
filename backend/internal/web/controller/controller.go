@@ -58,6 +58,15 @@ func NewController(params *Params) Controller {
 	}
 }
 
+// @title           Golang Boilerplate API
+// @version         1.0
+// @description     Golang Boilerplate API.
+// @host go-boier.vn
+// @BasePath /api
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func (c *controller) Routes(rg *gin.RouterGroup) {
 	c.heartbeatRoutes(rg.Group("/heartbeat"))
 
