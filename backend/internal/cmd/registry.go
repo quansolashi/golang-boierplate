@@ -18,7 +18,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func (a *app) inject(ctx context.Context) error {
+func (a *app) inject(_ context.Context) error {
 	// load environment variables
 	env, err := a.loadEnv()
 	if err != nil {

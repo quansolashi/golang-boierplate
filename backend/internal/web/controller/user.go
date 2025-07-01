@@ -25,6 +25,8 @@ func (c *controller) userRoutes(rg *gin.RouterGroup) {
 // @Failure     400 {object} util.ErrorResponse
 // @Failure     404 {object} util.ErrorResponse
 // @Failure     500 {object} util.ErrorResponse
+//
+//nolint:godot
 func (c *controller) userIndex(ctx *gin.Context) {
 	users, err := c.db.User.List(ctx)
 	if err != nil {
@@ -47,6 +49,8 @@ func (c *controller) userIndex(ctx *gin.Context) {
 // @Failure     400 {object} util.ErrorResponse
 // @Failure     404 {object} util.ErrorResponse
 // @Failure     500 {object} util.ErrorResponse
+//
+//nolint:godot
 func (c *controller) showUser(ctx *gin.Context) {
 	userID, err := util.GetParamUint64(ctx, "userId")
 	if err != nil {

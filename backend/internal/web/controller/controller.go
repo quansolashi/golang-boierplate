@@ -67,6 +67,8 @@ func NewController(params *Params) Controller {
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
+//
+//nolint:godot
 func (c *controller) Routes(rg *gin.RouterGroup) {
 	c.heartbeatRoutes(rg.Group("/heartbeat"))
 

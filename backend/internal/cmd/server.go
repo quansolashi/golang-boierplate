@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	_ "github.com/quansolashi/golang-boierplate/backend/docs/web"
+	_ "github.com/quansolashi/golang-boierplate/backend/docs/web" // register swagger docs.
 	graph "github.com/quansolashi/golang-boierplate/backend/internal/graphql/handler"
 	web "github.com/quansolashi/golang-boierplate/backend/internal/web/controller"
 	"github.com/quansolashi/golang-boierplate/backend/pkg/config"
@@ -53,9 +53,9 @@ func Run() error {
 	app.logger.Info().Int64("port", app.env.Port).Send()
 
 	// check queue
-	// if err := app.checkQueue(ctx); err != nil {
-	// 	return err
-	// }
+	if err := app.checkQueue(ctx); err != nil {
+		return err
+	}
 
 	// graceful shutdown
 	quit := make(chan os.Signal, 1)
