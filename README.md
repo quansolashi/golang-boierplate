@@ -122,14 +122,5 @@ Or use your preferred migration tool.
 
 ## API Documentation
 
-- Swagger UI is auto-generated and available at `/docs/web` (if enabled in the server).
+- Swagger UI is auto-generated and available at `/docs/web`.
 
----
-
-## License
-
-MIT
-
----
-
-Let me know if you want to add more details or usage examples!
