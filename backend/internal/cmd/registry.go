@@ -42,17 +42,17 @@ func (a *app) inject(_ context.Context) error {
 
 	redis := a.newRedisDatabase()
 
-	// rabbitmq, err := a.newRabbitMQ()
-	// if err != nil {
-	// 	return err
-	// }
-	// a.queue = rabbitmq
+	rabbitmq, err := a.newRabbitMQ()
+	if err != nil {
+		return err
+	}
+	a.queue = rabbitmq
 
 	// app web controller
 	a.web = web.NewController(&web.Params{
-		DB:    database,
-		Redis: redis,
-		// RabbitMQ:         rabbitmq,
+		DB:               database,
+		Redis:            redis,
+		RabbitMQ:         rabbitmq,
 		LocalTokenSecret: a.env.LocalTokenSecret,
 		WebURL:           a.env.WebURL,
 		GoogleAPIKey:     a.env.GoogleAPIKey,

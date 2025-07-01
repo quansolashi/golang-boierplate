@@ -25,6 +25,10 @@ type Environment struct {
 	RabbitMQPassword      string `envconfig:"RBM_PASSWORD" default:""`
 	RabbitMQHost          string `envconfig:"RBM_HOST" default:"127.0.0.1"`
 	RabbitMQPort          string `envconfig:"RBM_PORT" default:"5672"`
+	S3BucketName          string `envconfig:"S3_BUCKET_NAME" default:""`
+	AwsRegion             string `envconfig:"AWS_REGION" default:""`
+	AwsAccessKey          string `envconfig:"AWS_ACCESS_KEY" default:""`
+	AwsSecretKey          string `envconfig:"AWS_SECRET_KEY" default:""`
 }
 
 type Client interface {

@@ -10,11 +10,15 @@ import (
 )
 
 var tables = map[string]interface{}{
-	"users": &entity.User{},
+	"users":         &entity.User{},
+	"user_profiles": &entity.UserProfile{},
+	"posts":         &entity.Post{},
 }
 
 var migrationOrders = []string{
 	"users",
+	"user_profiles",
+	"posts",
 }
 
 func Run(ctx context.Context, db *mysql.Client, logger *zap.Logger) error {
