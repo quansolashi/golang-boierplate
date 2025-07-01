@@ -1,4 +1,4 @@
-.PHONY: help setup install gqlgen entdesc entgen protoc fmt vet lint test build dev 
+.PHONY: help setup install gqlgen entdesc entgen protoc fmt vet lint lint-fix test docs build dev 
 
 GOLANGCI_VERSION := 1.57.2
 MOCKGEN_VERSION := 0.4.0
@@ -30,8 +30,14 @@ vet:
 lint:
 	./bin/golangci-lint run -c .golangci.yaml ./...
 
+lint-fix:
+	./bin/golangci-lint run -c .golangci.yaml ./... --fix
+
 test:
 	go test -v -cover -coverprofile=coverage.txt -covermode=atomic $(TEST_PACKAGES)
+
+docs:
+	swag init -d ./internal/web/controller -g ./controller.go --pd -o ./docs/web
 
 build:
 	go build -o ./app ./cmd/main.go
